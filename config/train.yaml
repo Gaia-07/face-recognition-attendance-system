@@ -1,0 +1,40 @@
+experiment:
+  name: "avatar_arcface_compact"
+  seed: 42
+  seeds_for_ci: [42, 1337, 2026]
+
+data:
+  raw_dir: "data/raw/face_attendance_dataset"
+  splits_dir: "data/splits"
+  image_size: 128
+  num_workers: 0
+
+model:
+  backbone: "compact_resnet"
+  embedding_dim: 128
+  margin: 0.5
+  scale: 32.0
+  dropout: 0.2
+
+training:
+  batch_size: 32
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  epochs: 30
+  warmup_epochs: 3
+  early_stopping_patience: 6
+  fast_epochs: 1  # For CI smoke testing
+
+augmentation:
+  enabled: true
+  horizontal_flip_prob: 0.0  # Kept 0 if avatar faces have directional features, otherwise standard
+  shift_scale_rotate_prob: 0.5
+  brightness_contrast_prob: 0.5
+  blur_prob: 0.3
+  noise_prob: 0.3
+  cutout_prob: 0.2
+
+export:
+  onnx_path: "models/avatar_cnn.onnx"
+  opset: 17
+  tolerance: 1e-4

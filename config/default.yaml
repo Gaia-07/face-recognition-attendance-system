@@ -1,0 +1,48 @@
+system:
+  environment: "development"
+  log_level: "INFO"
+  seed: 42
+
+database:
+  url: "sqlite:///./data/fras.db"
+  echo: false
+
+biometrics:
+  active_backend: "avatar_cnn"
+  backends:
+    avatar_cnn:
+      model_path: "models/avatar_cnn.onnx"
+      threshold_path: "models/threshold.json"
+      embedding_dim: 128
+      input_shape: [128, 128]
+    sface:
+      detector_model: "models/face_detection_yunet_2023mar.onnx"
+      recognizer_model: "models/face_recognition_sface_2021dec.onnx"
+      embedding_dim: 128
+      input_shape: [112, 112]
+  matcher:
+    metric: "cosine"
+    top_k: 3
+    margin_threshold: 0.05
+    default_threshold: 0.65
+  quality:
+    blur_threshold: 60.0
+    min_face_size: 64
+    min_brightness: 40.0
+    max_brightness: 220.0
+  temporal:
+    window_n: 5
+    consensus_k: 3
+  liveness:
+    enabled: false
+    challenge_type: "yaw_challenge"
+
+attendance:
+  late_cutoff_time: "09:15:00"
+  allow_checkout: true
+  prevent_duplicates: true
+
+security:
+  store_raw_images: false
+  enable_audit_log: true
+  token_expire_minutes: 480

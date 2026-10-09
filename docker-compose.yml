@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn fras.api.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./results:/app/results
+    environment:
+      - ENVIRONMENT=production
+      - BIOMETRIC_ENCRYPTION_KEY=dGhpc19pc19hX2R1bW15X2tleV9mb3JfZGV2X29ubHlfMzJiPQ==
+      - DATABASE_URL=sqlite:///./data/fras.db
+      - ACTIVE_BACKEND=avatar_cnn
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: streamlit run src/fras/app/Home.py --server.port=8501 --server.address=0.0.0.0
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./results:/app/results
+    environment:
+      - API_URL=http://api:8000
+      - ACTIVE_BACKEND=avatar_cnn
+    depends_on:
+      api:
+        condition: service_healthy

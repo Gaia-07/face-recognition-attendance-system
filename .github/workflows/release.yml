@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Package release assets
+        run: |
+          mkdir -p release_artifacts
+          cp -r models/ release_artifacts/
+          cp -r results/ release_artifacts/
+          tar -czf release_artifacts.tar.gz -C release_artifacts .
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            models/avatar_cnn.onnx
+            models/threshold.json
+            release_artifacts.tar.gz
+            docs/MODEL_CARD.md
+          draft: false
+          prerelease: false
+          generate_release_notes: true

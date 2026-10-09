@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+env/
+venv/
+ENV/
+
+# Testing & Coverage
+.coverage
+.coverage.*
+.pytest_cache/
+coverage.xml
+htmlcov/
+nosetests.xml
+
+# Mypy / Ruff
+.mypy_cache/
+.ruff_cache/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables & secrets
+.env
+*.local.env
+
+# Database
+*.db
+*.sqlite3
+instance/
+
+# OS artifacts
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Temporary outputs (keep model artifacts & results)
+data/temp/
+scratch/
