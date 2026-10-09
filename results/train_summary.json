@@ -1,0 +1,126 @@
+{
+  "experiment": "avatar_arcface_compact",
+  "fast_mode": false,
+  "validation_metrics": {
+    "roc_auc": 1.0,
+    "eer": 0.0,
+    "eer_threshold": 0.744,
+    "tar_at_far_1e2": 1.0,
+    "tar_at_far_1e3": 1.0,
+    "calibrated_threshold_1pct": 0.653,
+    "calibrated_far": 0.009722222222222222,
+    "calibrated_frr": 0.0,
+    "calibrated_tar": 1.0,
+    "train_duration_sec": 289.86407232284546,
+    "epochs_run": 30,
+    "embedding_dim": 128,
+    "margin": 0.5,
+    "augmentation": true
+  },
+  "test_metrics_unseen": {
+    "roc_auc": 1.0,
+    "eer": 0.0,
+    "eer_threshold": 0.681,
+    "tar_at_far_1e2": 1.0,
+    "tar_at_far_1e3": 1.0,
+    "calibrated_threshold_1pct": 0.554,
+    "calibrated_far": 0.009722222222222222,
+    "calibrated_frr": 0.0,
+    "calibrated_tar": 1.0
+  },
+  "threshold": {
+    "metric": "cosine",
+    "target_far": 0.01,
+    "calibrated_threshold": 0.653,
+    "val_eer": 0.0,
+    "val_roc_auc": 1.0,
+    "val_tar_at_far_1e2": 1.0,
+    "val_far": 0.009722222222222222,
+    "val_frr": 0.0,
+    "date_calibrated": "2026-10-09 19:16:28"
+  },
+  "onnx_export": {
+    "onnx_path": "C:\\Users\\Monika\\.gemini\\antigravity\\scratch\\face-recognition-attendance-system\\models\\avatar_cnn.onnx",
+    "checksum_sha256": "f2ba400aebf2467c17b638f53d0988b8a3fe816e678cae85243b4c86f1cdccab",
+    "max_abs_diff": 1.1920928955078125e-07,
+    "file_size_bytes": 5041435,
+    "opset_version": 17,
+    "parity_verified": true
+  },
+  "baselines_comparison": {
+    "baseline_1_pixel_knn": {
+      "name": "Raw Pixels / HOG + Cosine kNN",
+      "roc_auc": 0.8129783950617284,
+      "eer": 0.2548611111111111,
+      "tar_at_far_1e2": 0.36111111111111116
+    },
+    "baseline_2_lbph": {
+      "name": "Local Binary Pattern Histograms (LBPH)",
+      "roc_auc": 0.7794367283950617,
+      "eer": 0.26805555555555555,
+      "tar_at_far_1e2": 0.08333333333333337
+    },
+    "baseline_3_softmax_ce": {
+      "name": "Softmax Cross-Entropy CNN",
+      "roc_auc": 1.0,
+      "eer": 0.0,
+      "tar_at_far_1e2": 1.0
+    },
+    "proposed_arcface_cnn": {
+      "name": "ArcFace AvatarResNet (Proposed)",
+      "roc_auc": 1.0,
+      "eer": 0.0,
+      "tar_at_far_1e2": 1.0
+    }
+  },
+  "ablations": {
+    "no_augmentation": {
+      "description": "ArcFace m=0.5, d=128 without data augmentation",
+      "roc_auc": 0.9991126543209876,
+      "eer": 0.016666666666666666,
+      "tar_at_far_1e2": 0.9611111111111111
+    },
+    "margin_0.0": {
+      "description": "ArcFace with margin m=0.0",
+      "margin": 0.0,
+      "roc_auc": 0.9991820987654322,
+      "eer": 0.005555555555555556,
+      "tar_at_far_1e2": 0.9944444444444445
+    },
+    "margin_0.3": {
+      "description": "ArcFace with margin m=0.3",
+      "margin": 0.3,
+      "roc_auc": 1.0,
+      "eer": 0.0,
+      "tar_at_far_1e2": 1.0
+    },
+    "margin_0.5": {
+      "description": "ArcFace with margin m=0.5",
+      "margin": 0.5,
+      "roc_auc": 0.9986728395061728,
+      "eer": 0.016666666666666666,
+      "tar_at_far_1e2": 0.9833333333333333
+    },
+    "dim_64": {
+      "description": "ArcFace with embedding dimension d=64",
+      "embedding_dim": 64,
+      "roc_auc": 1.0,
+      "eer": 0.0,
+      "tar_at_far_1e2": 1.0
+    },
+    "dim_128": {
+      "description": "ArcFace with embedding dimension d=128",
+      "embedding_dim": 128,
+      "roc_auc": 0.9992438271604938,
+      "eer": 0.0125,
+      "tar_at_far_1e2": 0.9777777777777777
+    },
+    "dim_256": {
+      "description": "ArcFace with embedding dimension d=256",
+      "embedding_dim": 256,
+      "roc_auc": 1.0,
+      "eer": 0.0,
+      "tar_at_far_1e2": 1.0
+    }
+  }
+}

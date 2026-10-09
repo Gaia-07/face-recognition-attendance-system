@@ -1,0 +1,11 @@
+{
+  "metric": "cosine",
+  "target_far": 0.01,
+  "calibrated_threshold": 0.653,
+  "val_eer": 0.0,
+  "val_roc_auc": 1.0,
+  "val_tar_at_far_1e2": 1.0,
+  "val_far": 0.009722222222222222,
+  "val_frr": 0.0,
+  "date_calibrated": "2026-10-09 19:16:28"
+}
