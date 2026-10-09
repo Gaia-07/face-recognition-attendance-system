@@ -1,0 +1,19 @@
+{
+  "title": "Face Recognition Attendance System (Synthetic)",
+  "id": "YOUR_KAGGLE_USERNAME/face-recognition-attendance-synthetic",
+  "licenses": [
+    {
+      "name": "CC0-1.0"
+    }
+  ],
+  "keywords": [
+    "face recognition",
+    "attendance system",
+    "computer vision",
+    "synthetic data",
+    "biometrics",
+    "image classification",
+    "time series"
+  ],
+  "description": "A synthetic dataset pairing a labeled face-image gallery (30 identities x 15 procedurally generated avatar images) with a realistic daily attendance log (check-in/check-out times, status, recognition confidence) for prototyping face-recognition-based attendance systems. No real people are depicted."
+}
