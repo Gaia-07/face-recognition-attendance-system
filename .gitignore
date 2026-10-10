@@ -61,3 +61,6 @@ Desktop.ini
 # Temporary outputs (keep model artifacts & results)
 data/temp/
 scratch/
+logs/*.jsonl
+logs/*.log
+

@@ -101,3 +101,117 @@ def test_analytics_endpoints(client: TestClient) -> None:
     assert isinstance(dept_data, list)
     assert len(dept_data) >= 1
     assert "department" in dept_data[0]
+
+
+def test_session_lifecycle_and_attendance_flow(client: TestClient) -> None:
+    # 1. Login as faculty
+    login_resp = client.post(
+        "/api/auth/token",
+        data={"username": "faculty", "password": "faculty123"},
+    )
+    assert login_resp.status_code == 200
+    token = login_resp.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # 2. Create session
+    sess_resp = client.post(
+        "/api/sessions",
+        json={"session_name": "API Test Gate Session", "camera_id": "TEST_CAM"},
+        headers=headers,
+    )
+    assert sess_resp.status_code == 201
+    sess_id = sess_resp.json()["id"]
+
+    # 3. Get active session
+    active_resp = client.get("/api/sessions/active")
+    assert active_resp.status_code == 200
+    assert active_resp.json()["id"] == sess_id
+
+    # 4. Manual override
+    manual_resp = client.post(
+        "/api/attendance/manual",
+        json={
+            "student_id": 1,
+            "session_id": sess_id,
+            "status": "Present",
+            "reason": "Test manual verification",
+        },
+        headers=headers,
+    )
+    assert manual_resp.status_code == 200
+    assert manual_resp.json()["status"] == "Present"
+
+    # Export reports (xlsx and pdf)
+    export_xlsx = client.get("/api/attendance/export?format=xlsx")
+    assert export_xlsx.status_code == 200
+    assert len(export_xlsx.content) > 0
+
+    export_pdf = client.get("/api/attendance/export?format=pdf")
+    assert export_pdf.status_code == 200
+    assert len(export_pdf.content) > 0
+
+    # Risk analytics and health
+    risk_resp = client.get("/api/analytics/absence-risks")
+    assert risk_resp.status_code == 200
+
+    health_resp = client.get("/healthz")
+    assert health_resp.status_code == 200
+    assert health_resp.json()["status"] == "ok"
+
+    # 5. End session
+    end_resp = client.post(f"/api/sessions/{sess_id}/end", headers=headers)
+    assert end_resp.status_code == 200
+    assert end_resp.json()["ended_at"] is not None
+
+
+def test_student_enrollment_checkin_and_erasure_api(client: TestClient) -> None:
+    from pathlib import Path
+
+    # 1. Login as admin
+    admin_login = client.post(
+        "/api/auth/token",
+        data={"username": "admin", "password": "admin123"},
+    )
+    admin_token = admin_login.json()["access_token"]
+    admin_headers = {"Authorization": f"Bearer {admin_token}"}
+
+    # 2. Enroll a student with face photo
+    img_path = Path("data/raw/face_attendance_dataset/images/person_001/person_001_01.jpg")
+    if not img_path.exists():
+        return
+
+    with open(img_path, "rb") as f:
+        enroll_resp = client.post(
+            "/api/students",
+            data={
+                "external_id": "test_api_person_999",
+                "name": "API Test User",
+                "department": "Engineering",
+            },
+            files={"photo": ("face.jpg", f, "image/jpeg")},
+            headers=admin_headers,
+        )
+    assert enroll_resp.status_code == 201
+
+    # 3. Create session & check-in
+    sess_resp = client.post(
+        "/api/sessions",
+        json={"session_name": "Check-in API Test", "camera_id": "CAM_01"},
+        headers=admin_headers,
+    )
+    sess_id = sess_resp.json()["id"]
+
+    with open(img_path, "rb") as f:
+        checkin_resp = client.post(
+            "/api/attendance/check-in",
+            data={"session_id": str(sess_id), "camera_id": "CAM_01"},
+            files={"photo": ("face.jpg", f, "image/jpeg")},
+        )
+    assert checkin_resp.status_code == 200
+
+    # 4. Close session
+    client.post(f"/api/sessions/{sess_id}/end", headers=admin_headers)
+
+    # 5. GDPR erasure
+    del_student = client.delete("/api/students/test_api_person_999", headers=admin_headers)
+    assert del_student.status_code == 204
