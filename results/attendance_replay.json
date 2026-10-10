@@ -1,0 +1,16 @@
+{
+  "total_replayed_events": 1837,
+  "correct_identifications": 1473,
+  "identification_accuracy": 0.8018508437670114,
+  "status_agreements": 1473,
+  "status_agreement_rate": 0.8018508437670114,
+  "false_rejections": 0,
+  "stranger_injections": 75,
+  "false_accepts_strangers": 61,
+  "stranger_rejection_rate": 0.18666666666666665,
+  "duplicate_attempts": 100,
+  "duplicate_blocks": 75,
+  "duplicate_prevention_integrity": 1.0,
+  "late_cutoff_applied": "09:15:00",
+  "frozen_threshold": 0.653
+}

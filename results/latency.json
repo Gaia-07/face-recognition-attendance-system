@@ -1,0 +1,48 @@
+{
+  "onnx_cpu_inference": {
+    "p50_ms": 3.5547500010579824,
+    "p95_ms": 34.86431498895399,
+    "p99_ms": 46.16740200202916,
+    "mean_ms": 6.857655000203522,
+    "throughput_fps": 145.8224422153523,
+    "iterations": 100
+  },
+  "matcher_scaling_benchmark": [
+    {
+      "gallery_size": 30,
+      "p50_search_ms": 0.0037999998312443495,
+      "p95_search_ms": 0.005615005647996437,
+      "mean_search_ms": 0.004395998839754611
+    },
+    {
+      "gallery_size": 100,
+      "p50_search_ms": 0.00449999060947448,
+      "p95_search_ms": 0.0049200003559235475,
+      "mean_search_ms": 0.004761999589391053
+    },
+    {
+      "gallery_size": 500,
+      "p50_search_ms": 0.011850002920255065,
+      "p95_search_ms": 0.015305006672861051,
+      "mean_search_ms": 0.011574001400731504
+    },
+    {
+      "gallery_size": 1000,
+      "p50_search_ms": 0.014499993994832039,
+      "p95_search_ms": 0.01595999710843898,
+      "mean_search_ms": 0.015247999399434775
+    },
+    {
+      "gallery_size": 5000,
+      "p50_search_ms": 0.16180000238819048,
+      "p95_search_ms": 0.2550899975176435,
+      "mean_search_ms": 0.18256000184919685
+    },
+    {
+      "gallery_size": 10000,
+      "p50_search_ms": 0.2357499979552813,
+      "p95_search_ms": 0.35886500190827064,
+      "mean_search_ms": 0.24975800071842968
+    }
+  ]
+}
