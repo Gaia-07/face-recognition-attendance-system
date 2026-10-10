@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software or benchmark, please cite it as below."
+authors:
+  - family-names: "Bhoomika"
+    given-names: ""
+    affiliation: "Government Women's Polytechnic Ranchi"
+  - family-names: "Rashid"
+    given-names: "MD"
+    affiliation: "Government Women's Polytechnic Ranchi"
+  - family-names: "Gaia-07"
+    given-names: "Engineering Team"
+title: "Face Recognition Attendance System (FRAS): Enterprise Biometric Pipeline with Open-Set ArcFace Evaluation and Privacy Guarantees"
+version: 1.0.0
+date-released: 2026-10-10
+url: "https://github.com/Gaia-07/face-recognition-attendance-system"
+license: MIT
