@@ -27,6 +27,10 @@ class QualityReport:
     face_height: int
     diagnostic_message: str
 
+    @property
+    def failure_reason(self) -> str:
+        return self.diagnostic_message
+
 
 def compute_laplacian_blur_variance(image_bgr_or_rgb: np.ndarray) -> float:
     """Computes variance of the Laplacian as a high-frequency blur proxy."""
@@ -114,3 +118,29 @@ def check_face_quality(
         face_height=h,
         diagnostic_message="Quality criteria satisfied.",
     )
+
+
+class QualityGate:
+    """Configurable quality gating wrapper."""
+
+    def __init__(
+        self,
+        blur_threshold: float = 60.0,
+        min_face_size: int = 64,
+        min_brightness: float = 40.0,
+        max_brightness: float = 220.0,
+    ) -> None:
+        self.blur_threshold = blur_threshold
+        self.min_face_size = min_face_size
+        self.min_brightness = min_brightness
+        self.max_brightness = max_brightness
+
+    def check(self, face_image: np.ndarray) -> QualityReport:
+        """Evaluates face image against configured criteria."""
+        return check_face_quality(
+            face_image=face_image,
+            blur_threshold=self.blur_threshold,
+            min_face_size=self.min_face_size,
+            min_brightness=self.min_brightness,
+            max_brightness=self.max_brightness,
+        )
