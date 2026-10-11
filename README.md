@@ -201,10 +201,22 @@ python scripts/seed_database.py
 streamlit run src/fras/app/Home.py
 ```
 
+### Option C: One-Click Vercel Serverless Deployment
+
+Deploy the FastAPI backend, ONNX biometric inference engine, and interactive Web Kiosk directly to Vercel:
+
+1. Import your GitHub repository (`Gaia-07/face-recognition-attendance-system`) on [Vercel](https://vercel.com/new).
+2. Leave root directory as `./` and click **Deploy**.
+3. Vercel automatically launches the serverless runtime configured via `vercel.json` and `api/index.py`:
+   - **Interactive Web Kiosk**: `https://<your-project>.vercel.app/`
+   - **Live Swagger API Documentation**: `https://<your-project>.vercel.app/docs`
+   - **Biometric Health & Decision Threshold Probe**: `https://<your-project>.vercel.app/healthz`
+
 ### Default Credentials
 - **Admin**: `username: admin`, `password: admin123` (Full administrative rights, student enrollment, GDPR erasure)
 - **Faculty**: `username: faculty`, `password: faculty123` (Session management, live check-ins, manual override)
 - **Auditor**: `username: auditor`, `password: auditor123` (Read-only access to encrypted audit trails and compliance reports)
+
 
 ---
 

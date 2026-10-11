@@ -56,6 +56,21 @@ docker compose logs -f
   - Command: `streamlit run src/fras/app/Home.py --server.port 8501 --server.address 0.0.0.0`
   - Exposed Port: `8501:8501`
 
+### 2.3 Vercel Serverless Deployment (One-Click)
+
+FRAS includes native Vercel serverless integration (`vercel.json`, `api/index.py`, and `requirements.txt`):
+
+1. **Connect Repository on Vercel**:
+   - Navigate to [https://vercel.com/new](https://vercel.com/new).
+   - Select and import your GitHub repository: `Gaia-07/face-recognition-attendance-system`.
+   - Leave the Root Directory as `./` and click **Deploy**.
+2. **Architecture on Vercel**:
+   - Vercel automatically deploys the ASGI FastAPI backend via `@vercel/python` using `api/index.py`.
+   - The ONNX model (`models/avatar_cnn.onnx`) is executed on CPU via ONNX Runtime without requiring PyTorch wheels, keeping bundle size well under Vercel's 250 MB ceiling.
+   - The root URL (`/`) serves an interactive, mobile-responsive Tailwind CSS biometric check-in kiosk.
+   - Swagger documentation is available at `/docs`, and `/healthz` provides system diagnostics.
+
+
 ---
 
 ## 3. Environment Variables & Secrets Management
