@@ -1,0 +1,9 @@
+.git
+.github
+.venv
+tests/
+notebooks/
+docs/
+models/*.pt
+*.log
+*.sqlite3
