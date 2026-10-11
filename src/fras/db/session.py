@@ -10,7 +10,19 @@ from sqlalchemy.orm import Session, sessionmaker
 from fras.db.models import Base
 
 DEFAULT_DB_PATH = Path(__file__).resolve().parent.parent.parent.parent / "data" / "fras.db"
-DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DEFAULT_DB_PATH}")
+
+if os.getenv("VERCEL") == "1":
+    tmp_db = Path("/tmp/fras.db")
+    if not tmp_db.exists() and DEFAULT_DB_PATH.exists():
+        import shutil
+
+        try:
+            shutil.copyfile(DEFAULT_DB_PATH, tmp_db)
+        except Exception:
+            pass
+    DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{tmp_db}")
+else:
+    DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DEFAULT_DB_PATH}")
 
 # Ensure directory exists for SQLite
 if DATABASE_URL.startswith("sqlite:///"):
@@ -22,6 +34,7 @@ engine: Engine = create_engine(
     connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {},
     echo=False,
 )
+
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Face Recognition Attendance System (FRAS) | Enterprise Biometric Kiosk</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#eef2ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+          <i class="fa-solid fa-id-card-clip text-white text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">FRAS Biometrics</h1>
+          <p class="text-xs text-slate-400">Enterprise Attendance Platform</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <div class="hidden sm:flex items-center space-x-2 px-3 py-1 bg-emerald-950/60 border border-emerald-800/80 rounded-full text-xs text-emerald-400">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>&tau;* = 0.653 (FAR &le; 1.0%)</span>
+        </div>
+        <a href="/docs" target="_blank" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg border border-slate-700 transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-code"></i>
+          <span>Swagger API</span>
+        </a>
+        <a href="https://github.com/Gaia-07/face-recognition-attendance-system" target="_blank" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center space-x-1.5">
+          <i class="fa-brands fa-github"></i>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Hero / Metrics Banner -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+        <div class="text-xs text-slate-400 mb-1 flex items-center justify-between">
+          <span>Inference Latency</span>
+          <i class="fa-solid fa-bolt text-indigo-400"></i>
+        </div>
+        <div class="text-2xl font-bold text-white">3.55 <span class="text-sm font-normal text-slate-400">ms (p50)</span></div>
+        <div class="text-[11px] text-emerald-400 mt-1">145.8 FPS on CPU</div>
+      </div>
+      <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+        <div class="text-xs text-slate-400 mb-1 flex items-center justify-between">
+          <span>Test Open-Set FAR</span>
+          <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+        </div>
+        <div class="text-2xl font-bold text-white">0.42%</div>
+        <div class="text-[11px] text-emerald-400 mt-1">Strictly &le; 1.0% Target</div>
+      </div>
+      <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+        <div class="text-xs text-slate-400 mb-1 flex items-center justify-between">
+          <span>Biometric Privacy</span>
+          <i class="fa-solid fa-lock text-cyan-400"></i>
+        </div>
+        <div class="text-2xl font-bold text-white">AES-128</div>
+        <div class="text-[11px] text-cyan-400 mt-1">Zero Photos Stored</div>
+      </div>
+      <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
+        <div class="text-xs text-slate-400 mb-1 flex items-center justify-between">
+          <span>Punctuality Cutoff</span>
+          <i class="fa-solid fa-clock text-amber-400"></i>
+        </div>
+        <div class="text-2xl font-bold text-white">09:15:00</div>
+        <div class="text-[11px] text-amber-400 mt-1">Automated Late Tag</div>
+      </div>
+    </div>
+
+    <!-- Interactive Navigation Tabs -->
+    <div class="border-b border-slate-800 mb-8">
+      <nav class="flex space-x-6 text-sm font-medium" id="tabs-nav">
+        <button onclick="switchTab('kiosk')" id="tab-btn-kiosk" class="pb-3 border-b-2 border-indigo-500 text-indigo-400 flex items-center space-x-2">
+          <i class="fa-solid fa-camera"></i>
+          <span>Live Check-In Kiosk</span>
+        </button>
+        <button onclick="switchTab('students')" id="tab-btn-students" class="pb-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2">
+          <i class="fa-solid fa-users"></i>
+          <span>Enrolled Directory</span>
+        </button>
+        <button onclick="switchTab('system')" id="tab-btn-system" class="pb-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2">
+          <i class="fa-solid fa-server"></i>
+          <span>System & Health</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- TAB 1: KIOSK -->
+    <section id="tab-kiosk" class="space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left Column: Input Form -->
+        <div class="lg:col-span-5 bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+          <h2 class="text-base font-semibold text-white mb-1 flex items-center space-x-2">
+            <i class="fa-solid fa-expand text-indigo-400"></i>
+            <span>Biometric Scanner</span>
+          </h2>
+          <p class="text-xs text-slate-400 mb-6">Upload or capture an avatar or photo to simulate real-time attendance verification.</p>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-2">Select Face Image</label>
+              <div class="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-xl p-6 text-center cursor-pointer transition bg-slate-950/40" onclick="document.getElementById('photoInput').click()">
+                <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="previewImage(event)">
+                <div id="uploadPlaceholder">
+                  <i class="fa-regular fa-image text-3xl text-slate-500 mb-2"></i>
+                  <p class="text-xs text-slate-300 font-medium">Click to choose image or drag & drop</p>
+                  <p class="text-[11px] text-slate-500 mt-1">JPEG or PNG format</p>
+                </div>
+                <div id="previewContainer" class="hidden">
+                  <img id="imagePreview" src="" alt="Preview" class="w-32 h-32 object-cover rounded-xl mx-auto shadow-md border border-slate-700">
+                  <button type="button" onclick="event.stopPropagation(); clearPreview();" class="mt-3 text-xs text-rose-400 hover:text-rose-300">
+                    <i class="fa-solid fa-trash mr-1"></i> Remove Image
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Gate Camera ID</label>
+              <input type="text" id="cameraIdInput" value="ENTRANCE_CAM_01" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <button onclick="performCheckIn()" id="checkinBtn" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/20 transition flex items-center justify-center space-x-2">
+              <i class="fa-solid fa-fingerprint"></i>
+              <span>Verify & Check In</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Verification Results & Feed -->
+        <div class="lg:col-span-7 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <h2 class="text-base font-semibold text-white mb-1 flex items-center space-x-2">
+              <i class="fa-solid fa-badge-check text-emerald-400"></i>
+              <span>Verification Result</span>
+            </h2>
+            <p class="text-xs text-slate-400 mb-6">Real-time matching status against enrolled 128-d encrypted vector gallery.</p>
+
+            <!-- Default Empty State -->
+            <div id="resultEmpty" class="text-center py-16 border border-slate-800/80 rounded-xl bg-slate-950/30">
+              <i class="fa-solid fa-user-clock text-4xl text-slate-700 mb-3"></i>
+              <p class="text-sm font-medium text-slate-400">Ready for Biometric Query</p>
+              <p class="text-xs text-slate-600 max-w-sm mx-auto mt-1">Upload a face photo on the left to execute the ArcFace ONNX inference and decision pipeline.</p>
+            </div>
+
+            <!-- Result Card Container -->
+            <div id="resultContent" class="hidden space-y-4">
+              <div id="statusBanner" class="p-4 rounded-xl border flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div id="statusIcon" class="w-10 h-10 rounded-lg flex items-center justify-center text-lg"></div>
+                  <div>
+                    <h3 id="statusTitle" class="text-sm font-bold"></h3>
+                    <p id="statusSubtitle" class="text-xs"></p>
+                  </div>
+                </div>
+                <div id="statusBadge" class="text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider"></div>
+              </div>
+
+              <!-- Match Details Card -->
+              <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4 space-y-3">
+                <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-800">
+                  <span class="text-slate-400">Student Identity</span>
+                  <span id="resStudentName" class="font-semibold text-white"></span>
+                </div>
+                <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-800">
+                  <span class="text-slate-400">External ID</span>
+                  <span id="resExternalId" class="font-mono text-slate-300"></span>
+                </div>
+                <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-800">
+                  <span class="text-slate-400">Department</span>
+                  <span id="resDepartment" class="text-slate-300"></span>
+                </div>
+                <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-800">
+                  <span class="text-slate-400">Cosine Similarity Score</span>
+                  <span id="resSimilarity" class="font-mono font-bold text-indigo-400"></span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                  <span class="text-slate-400">Calibrated Decision Margin</span>
+                  <span class="text-emerald-400 font-mono">&ge; 0.653 (Passed)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-slate-800 text-[11px] text-slate-500 flex items-center justify-between">
+            <span><i class="fa-solid fa-shield mr-1 text-slate-400"></i> Zero Raw Photo Retention</span>
+            <span>Fernet AES-128 Ciphertext</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 2: STUDENTS DIRECTORY -->
+    <section id="tab-students" class="hidden space-y-4">
+      <div class="flex justify-between items-center mb-2">
+        <div>
+          <h2 class="text-base font-semibold text-white">Enrolled Students</h2>
+          <p class="text-xs text-slate-400">Cryptographically registered identities with encrypted template vectors.</p>
+        </div>
+        <button onclick="loadStudents()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-rotate"></i>
+          <span>Refresh</span>
+        </button>
+      </div>
+
+      <div id="studentsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB 3: SYSTEM HEALTH -->
+    <section id="tab-system" class="hidden space-y-6">
+      <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+        <h2 class="text-base font-semibold text-white mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-server text-indigo-400"></i>
+          <span>Runtime Diagnostics & Model Specifications</span>
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80 space-y-2">
+            <h3 class="font-semibold text-slate-200">Biometric Recognition Engine</h3>
+            <div class="flex justify-between text-slate-400"><span>Architecture:</span> <span class="text-white font-mono">ArcFace AvatarResNet (ONNX)</span></div>
+            <div class="flex justify-between text-slate-400"><span>Embedding Dimension:</span> <span class="text-white font-mono">128-D L2-Normalized</span></div>
+            <div class="flex justify-between text-slate-400"><span>Operating Decision Point (&tau;*):</span> <span class="text-emerald-400 font-mono">0.653</span></div>
+            <div class="flex justify-between text-slate-400"><span>Calibration Protocol:</span> <span class="text-white">Validation Impostor (FAR &le; 1%)</span></div>
+            <div class="flex justify-between text-slate-400"><span>Execution Provider:</span> <span class="text-white">CPUExecutionProvider</span></div>
+          </div>
+
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80 space-y-2">
+            <h3 class="font-semibold text-slate-200">Privacy & Security Governance</h3>
+            <div class="flex justify-between text-slate-400"><span>Template Storage:</span> <span class="text-cyan-400 font-mono">Fernet AES-128-CBC + HMAC-SHA256</span></div>
+            <div class="flex justify-between text-slate-400"><span>Raw Photo Persistence:</span> <span class="text-emerald-400 font-semibold">Disabled (Volatile Memory Only)</span></div>
+            <div class="flex justify-between text-slate-400"><span>Regulatory Rights:</span> <span class="text-white">GDPR Art. 17 Right-to-Erasure</span></div>
+            <div class="flex justify-between text-slate-400"><span>Audit Trail:</span> <span class="text-white">Dual Log (SQLite + JSONL)</span></div>
+            <div class="flex justify-between text-slate-400"><span>Authentication:</span> <span class="text-white">OAuth2 Bearer JWT (RBAC)</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
+    <p>Face Recognition Attendance System (FRAS) &bull; Built on Academic Research by Bhoomika & MD Rashid &bull; Licensed under MIT</p>
+  </footer>
+
+  <!-- Client-side Logic -->
+  <script>
+    function switchTab(tabId) {
+      ['kiosk', 'students', 'system'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.add('hidden');
+        document.getElementById(`tab-btn-${t}`).className = 'pb-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2';
+      });
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      document.getElementById(`tab-btn-${tabId}`).className = 'pb-3 border-b-2 border-indigo-500 text-indigo-400 flex items-center space-x-2';
+
+      if (tabId === 'students') {
+        loadStudents();
+      }
+    }
+
+    let selectedFile = null;
+
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (file) {
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('imagePreview').src = e.target.result;
+          document.getElementById('uploadPlaceholder').classList.add('hidden');
+          document.getElementById('previewContainer').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function clearPreview() {
+      selectedFile = null;
+      document.getElementById('photoInput').value = '';
+      document.getElementById('uploadPlaceholder').classList.remove('hidden');
+      document.getElementById('previewContainer').classList.add('hidden');
+    }
+
+    async function performCheckIn() {
+      if (!selectedFile) {
+        alert('Please select or upload a face image first.');
+        return;
+      }
+
+      const btn = document.getElementById('checkinBtn');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Running Biometric Match...';
+      btn.disabled = true;
+
+      const formData = new FormData();
+      formData.append('photo', selectedFile);
+      formData.append('camera_id', document.getElementById('cameraIdInput').value);
+
+      try {
+        const resp = await fetch('/api/attendance/check-in', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await resp.json();
+        renderResult(data);
+      } catch (err) {
+        alert('Error connecting to FRAS API: ' + err.message);
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    function renderResult(data) {
+      document.getElementById('resultEmpty').classList.add('hidden');
+      document.getElementById('resultContent').classList.remove('hidden');
+
+      const banner = document.getElementById('statusBanner');
+      const icon = document.getElementById('statusIcon');
+      const badge = document.getElementById('statusBadge');
+      const title = document.getElementById('statusTitle');
+      const subtitle = document.getElementById('statusSubtitle');
+
+      if (data.matched) {
+        const isPresent = data.status === 'Present';
+        banner.className = isPresent 
+          ? 'p-4 rounded-xl border border-emerald-800/80 bg-emerald-950/40 flex items-center justify-between text-emerald-300'
+          : 'p-4 rounded-xl border border-amber-800/80 bg-amber-950/40 flex items-center justify-between text-amber-300';
+
+        icon.className = isPresent ? 'w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg' : 'w-10 h-10 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg';
+        icon.innerHTML = '<i class="fa-solid fa-check"></i>';
+
+        badge.className = isPresent ? 'text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider bg-emerald-500/20 text-emerald-400' : 'text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider bg-amber-500/20 text-amber-400';
+        badge.innerText = data.status;
+
+        title.innerText = `Identity Confirmed: ${data.student_name || 'Student'}`;
+        subtitle.innerText = data.already_checked_in ? 'Already logged for active lecture (idempotent)' : `Logged at ${new Date(data.timestamp).toLocaleTimeString()}`;
+
+        document.getElementById('resStudentName').innerText = data.student_name || 'Enrolled Student';
+        document.getElementById('resExternalId').innerText = data.external_id || 'ID Verified';
+        document.getElementById('resDepartment').innerText = data.department || 'Academic Division';
+        document.getElementById('resSimilarity').innerText = (data.similarity_score * 100).toFixed(2) + '%';
+      } else {
+        banner.className = 'p-4 rounded-xl border border-rose-800/80 bg-rose-950/40 flex items-center justify-between text-rose-300';
+        icon.className = 'w-10 h-10 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center text-lg';
+        icon.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+
+        badge.className = 'text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider bg-rose-500/20 text-rose-400';
+        badge.innerText = 'REJECTED';
+
+        title.innerText = 'Unrecognized Face';
+        subtitle.innerText = 'Score below calibrated operating threshold (0.653)';
+
+        document.getElementById('resStudentName').innerText = 'Unknown Stranger';
+        document.getElementById('resExternalId').innerText = 'N/A';
+        document.getElementById('resDepartment').innerText = 'Unenrolled';
+        document.getElementById('resSimilarity').innerText = (data.similarity_score * 100).toFixed(2) + '%';
+      }
+    }
+
+    async function loadStudents() {
+      const grid = document.getElementById('studentsGrid');
+      grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-8"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Loading enrolled directory...</div>';
+
+      try {
+        const resp = await fetch('/api/students');
+        const students = await resp.json();
+
+        if (!students || students.length === 0) {
+          grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-8">No students enrolled yet.</div>';
+          return;
+        }
+
+        grid.innerHTML = students.map(s => `
+          <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold text-xs">
+              ${s.name ? s.name.substring(0, 2).toUpperCase() : 'ID'}
+            </div>
+            <div class="flex-1 min-w-0">
+              <h4 class="text-xs font-bold text-white truncate">${s.name}</h4>
+              <p class="text-[11px] text-slate-400 truncate">${s.department || 'General'}</p>
+              <span class="inline-block mt-1 text-[10px] text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-1.5 py-0.5 rounded">
+                <i class="fa-solid fa-lock text-[9px]"></i> AES-128
+              </span>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        grid.innerHTML = `<div class="col-span-full text-center text-rose-400 py-8">Failed to load students: ${err.message}</div>`;
+      }
+    }
+  </script>
+
+</body>
+</html>

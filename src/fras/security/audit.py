@@ -2,6 +2,7 @@
 
 import json
 import logging
+import os
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -12,7 +13,10 @@ from fras.db.models import AuditLog
 logger = logging.getLogger("fras.security.audit")
 
 DEFAULT_AUDIT_LOG_FILE = (
-    Path(__file__).resolve().parent.parent.parent.parent / "logs" / "audit.jsonl"
+
+    Path("/tmp/logs/audit.jsonl")
+    if os.getenv("VERCEL") == "1"
+    else Path(__file__).resolve().parent.parent.parent.parent / "logs" / "audit.jsonl"
 )
 
 
@@ -21,7 +25,10 @@ class AuditService:
 
     def __init__(self, log_file: Path | str | None = None) -> None:
         self.log_file = Path(log_file) if log_file else DEFAULT_AUDIT_LOG_FILE
-        self.log_file.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            self.log_file.parent.mkdir(parents=True, exist_ok=True)
+        except Exception:
+            pass
 
     def log_event(
         self,
